@@ -10,7 +10,7 @@ git clone https://github.com/LighTend3r/gitEmails.git
 
 Install all requirements
 ```
-pip install -r requierments.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
