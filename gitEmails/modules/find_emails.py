@@ -20,12 +20,13 @@ def main_find_emails(session: requests.Session, args: argparse.Namespace):
     url = f"https://api.github.com/users/{USER_NAME}"
     info_user = request_api(url, session, args)
     NAME = info_user['name']
+    LOGIN = info_user['login']
 
 
     url = f"https://api.github.com/users/{USER_NAME}/repos"
     repos = request_api(url, session, args)
     for repo in repos:
-        if repo['owner']['login'] == USER_NAME: # If the repo is owned by the user
+        if repo['owner']['login'] == USER_NAME or repo['owner']['login'] == LOGIN: # If the repo is owned by the user
             url = f"https://api.github.com/repos/{repo['full_name']}/commits"
             commit = request_api(url, session, args)
             for c in range(0,len(commit),args.accuracy): # jump 5 commits
@@ -34,6 +35,11 @@ def main_find_emails(session: requests.Session, args: argparse.Namespace):
                     emails_found.add(commit[c]['commit']['author']['email'])
                 if commit[c]['commit']['committer']['name'] == NAME:
                     emails_found.add(commit[c]['commit']['committer']['email'])
+                if commit[c]['commit']['author']['name'] == LOGIN:
+                    emails_found.add(commit[c]['commit']['author']['email'])
+                if commit[c]['commit']['committer']['name'] == LOGIN:
+                    emails_found.add(commit[c]['commit']['committer']['email'])
+                
 
     emails_found_clean = set()
     for email in emails_found:
